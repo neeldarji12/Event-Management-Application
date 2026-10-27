@@ -46,9 +46,9 @@ function EventForm({ initialEvent, onSave, onCancel }) {
   function validateForm() {
     const newErrors = {};
 
-    const title = formData.title.trim();
-    const location = formData.location.trim();
-    const description = formData.description;
+    const title = (formData.title || "").trim();
+    const location = (formData.location || "").trim();
+    const description = (formData.description || "").trim();
 
     if (title.length < 3) {
       newErrors.title =
@@ -65,20 +65,10 @@ function EventForm({ initialEvent, onSave, onCancel }) {
     } else {
       const today = getToday();
 
-      // New events cannot have a date in the past.
+      // Only new events cannot have a date in the past
       if (!initialEvent && formData.date < today) {
         newErrors.date =
           "Event date cannot be in the past.";
-      }
-
-      // Existing historical dates may remain unchanged.
-      if (
-        initialEvent &&
-        formData.date < today &&
-        formData.date !== initialEvent.date
-      ) {
-        newErrors.date =
-          "A past date can only be kept if it is the original event date.";
       }
     }
 
@@ -104,9 +94,9 @@ function EventForm({ initialEvent, onSave, onCancel }) {
 
     onSave({
       ...formData,
-      title: formData.title.trim(),
-      description: formData.description.trim(),
-      location: formData.location.trim(),
+      title: (formData.title || "").trim(),
+      description: (formData.description || "").trim(),
+      location: (formData.location || "").trim(),
       status: formData.status || "Upcoming",
     });
   }
@@ -124,7 +114,9 @@ function EventForm({ initialEvent, onSave, onCancel }) {
           </h2>
 
           <p>
-            Enter the details below to manage your event.
+            {initialEvent
+              ? "Modify the event details below and save your changes."
+              : "Enter the details below to manage your event."}
           </p>
         </div>
 
@@ -150,7 +142,7 @@ function EventForm({ initialEvent, onSave, onCancel }) {
               name="title"
               type="text"
               placeholder="Enter event title"
-              value={formData.title}
+              value={formData.title || ""}
               onChange={handleChange}
               maxLength={100}
               aria-invalid={Boolean(errors.title)}
@@ -172,14 +164,14 @@ function EventForm({ initialEvent, onSave, onCancel }) {
               id="description"
               name="description"
               placeholder="Enter event description (optional)"
-              value={formData.description}
+              value={formData.description || ""}
               onChange={handleChange}
               maxLength={300}
               rows={3}
             />
 
             <div className="character-count">
-              {formData.description.length}/300 characters
+              {(formData.description || "").length}/300 characters
             </div>
 
             {errors.description && (
@@ -198,13 +190,8 @@ function EventForm({ initialEvent, onSave, onCancel }) {
               id="date"
               name="date"
               type="date"
-              value={formData.date}
-              min={
-                !initialEvent ||
-                formData.date >= getToday()
-                  ? getToday()
-                  : undefined
-              }
+              value={formData.date || ""}
+              min={!initialEvent ? getToday() : undefined}
               onChange={handleChange}
               aria-invalid={Boolean(errors.date)}
             />
@@ -225,7 +212,7 @@ function EventForm({ initialEvent, onSave, onCancel }) {
               id="time"
               name="time"
               type="time"
-              value={formData.time}
+              value={formData.time || ""}
               onChange={handleChange}
               aria-invalid={Boolean(errors.time)}
             />
@@ -247,7 +234,7 @@ function EventForm({ initialEvent, onSave, onCancel }) {
               name="location"
               type="text"
               placeholder="Enter event location"
-              value={formData.location}
+              value={formData.location || ""}
               onChange={handleChange}
               aria-invalid={Boolean(errors.location)}
             />
@@ -267,7 +254,7 @@ function EventForm({ initialEvent, onSave, onCancel }) {
             <select
               id="status"
               name="status"
-              value={formData.status}
+              value={formData.status || "Upcoming"}
               onChange={handleChange}
             >
               <option value="Upcoming">Upcoming</option>

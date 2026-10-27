@@ -164,12 +164,24 @@ export default function Home() {
   function handleAddEvent() {
     setEditingEvent(null);
     setShowForm(true);
+    setTimeout(() => {
+      const formElement = document.getElementById("event-form");
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 50);
   }
 
-  // Open form to edit an existing event
+  // Open form to edit an existing event and scroll to the form
   function handleEditEvent(event) {
     setEditingEvent(event);
     setShowForm(true);
+    setTimeout(() => {
+      const formElement = document.getElementById("event-form");
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 50);
   }
 
   // Create a new event or update an existing event
@@ -196,6 +208,13 @@ export default function Home() {
 
     setShowForm(false);
     setEditingEvent(null);
+
+    setTimeout(() => {
+      const element = document.getElementById("events-section");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 50);
   }
 
   // Delete an event
@@ -311,6 +330,7 @@ export default function Home() {
 
       {showForm && (
         <EventForm
+          key={editingEvent ? editingEvent.id : "new-event"}
           initialEvent={editingEvent}
           onSave={handleSaveEvent}
           onCancel={handleCancelForm}
